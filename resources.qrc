@@ -2,5 +2,10 @@
     <qresource prefix="/resources">
         <file alias="character.png">img/character.png</file>
         <file alias="banana.png">img/banana.png</file>
+	<file alias="orange.png">img/orange.png</file>
+	<file alias="raspberry.png">img/raspberry.png</file>
+	<file alias="r1ball.png">img/r1ball.png</file>
+	<file alias="r2ball.png">img/r2ball.png</file>
+	<file alias="r3ball.png">img/r3ball.png</file>
     </qresource>
 </RCC>

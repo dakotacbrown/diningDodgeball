@@ -5,9 +5,6 @@
 
 player::player(){
 
-    xdir = 1;
-    ydir = -1;
-
     image.load(":/resources/character.png");
 
     rect = image.rect();
@@ -19,49 +16,28 @@ player::~player() {
 }
 
 void player::move() {
-    rect.translate(xdir, ydir);
 
-    if (rect.left() == LEFT_EDGE) {
-        xdir = 1;
-    }
+    QString x = QString::number(mouse.x());
+    QString y = QString::number(mouse.y());
 
-    if (rect.right() == RIGHT_EDGE) {
-        xdir = -1;
-    }
+    qDebug() << "Mouse x: " + x + " Mouse y: " + y;
 
-    if (rect.top() == TOP_EDGE) {
-        ydir = 1;
-    }
-    if (rect.bottom() == BOTTOM_EDGE) {
-        ydir = -1;
-    }
+    rect.moveTo(mouse.x(),mouse.y());
+
 }
 
 void player::resetState() {
-    rect.moveTo(INITIAL_X, INITIAL_Y);
+
+  rect.moveTo(INITIAL_X, INITIAL_Y);
 }
 
-void player::setXDir(int x) {
-    xdir = x;
-}
+QRect player::getRect() {
 
-void player::setYDir(int y) {
-    ydir = y;
-}
-
-int player::getXDir() {
-    return xdir;
-}
-
- int player::getYDir() {
-     return ydir;
-}
-
-QRect player::getRect(){
-    return rect;
+  return rect;
 }
 
 QImage & player::getImage() {
-    return image;
+
+  return image;
 }
 

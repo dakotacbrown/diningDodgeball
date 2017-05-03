@@ -6,10 +6,9 @@ int main(int argc, char *argv[]) {
   QApplication app(argc, argv);
 
   dodgeball window;
-
-  window.resize(800, 480);
+  window.setFixedSize(1280, 720);
   window.setWindowTitle("BG Dining Dodgeball");
-  window.show();
+  window.showMaximized();
 
   return app.exec();
 }

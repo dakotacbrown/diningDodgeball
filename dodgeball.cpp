@@ -1,6 +1,7 @@
 #include <QPainter>
 #include <QApplication>
 #include "dodgeball.h"
+#include <random>
 
 dodgeball::dodgeball(QWidget *parent)
     : QWidget(parent){
@@ -12,15 +13,56 @@ dodgeball::dodgeball(QWidget *parent)
   gameWon = false;
   paused = false;
   gameStarted = false;
-  banana = new ball(":/resources/banana.png");
   character = new player();
+
+  if(round >= 1){
+      for(int i = 0; i < 10; i++)
+        banana[i] = new ball(":/resources/banana.png", round);
+      for(int i = 0; i < 10; i++)
+        soda[i] = new ball(":/resources/r1ball.png", round);
+      if(round >= 2){
+          for(int i = 0; i < 8; i++)
+            orange[i] = new ball(":/resources/orange.png", round);
+          for(int i = 0; i < 8; i++)
+            chips[i] = new ball(":/resources/r2ball.png", round);
+          if(round >= 3){
+              for(int i = 0; i < 6; i++)
+                raspberry[i] = new ball(":/resources/raspberry.png", round);
+              for(int i = 0; i < 6; i++)
+                candy[i] = new ball(":/resources/r3ball.png", round);
+          }
+      }
+  }
 
 }
 
 dodgeball::~dodgeball(){
+    delete character;
 
- delete character;
- delete banana;
+    if(round >= 1){
+        for(int i = 0; i < 10; i++)
+            delete banana[i];
+        for(int i = 0; i < 10; i++)
+          delete soda[i];
+
+        if(round >= 2){
+            for(int i = 0; i < 8; i++)
+              delete orange[i];
+            for(int i = 0; i < 8; i++)
+               delete chips[i];
+
+            if(round >= 3){
+                for(int i = 0; i < 6; i++)
+                  delete raspberry[i];
+                for(int i = 0; i < 6; i++)
+                  delete candy[i];
+            }
+        }
+    }
+
+
+
+
 }
 
 void dodgeball::paintEvent(QPaintEvent *e){
@@ -31,11 +73,11 @@ void dodgeball::paintEvent(QPaintEvent *e){
 
   if (gameOver){
 
-    finishGame(&painter, "Game lost");
+    finishGame(&painter, "Game Over!");
 
   } else if(gameWon){
 
-    finishGame(&painter, "Victory");
+    finishGame(&painter, "High Score!");
   } else{
 
     drawObjects(&painter);
@@ -57,14 +99,43 @@ void dodgeball::finishGame(QPainter *painter, QString message){
 }
 
 void dodgeball::drawObjects(QPainter *painter){
+    painter->drawImage(character->getRect(), character->getImage());
 
-  painter->drawImage(character->getRect(), character->getImage());
-  painter->drawImage(banana->getRect(), banana->getImage());
+    if(round >= 1){
+        for(int i = 0; i < 10; i++)
+            if(!banana[i]->isDestroyed())
+                painter->drawImage(banana[i]->getRect(), banana[i]->getImage());
+        for(int i = 0; i < 10; i++)
+            if(!soda[i]->isDestroyed())
+                painter->drawImage(soda[i]->getRect(), soda[i]->getImage());
+        if(round >= 2){
+            for(int i = 0; i < 8; i++)
+                if(!orange[i]->isDestroyed())
+                    painter->drawImage(orange[i]->getRect(), orange[i]->getImage());
+            for(int i = 0; i < 8; i++)
+                if(!chips[i]->isDestroyed())
+                    painter->drawImage(chips[i]->getRect(), chips[i]->getImage());
+            if(round >= 3){
+                for(int i = 0; i < 6; i++)
+                    if(!raspberry[i]->isDestroyed())
+                        painter->drawImage(raspberry[i]->getRect(), raspberry[i]->getImage());
+                for(int i = 0; i < 6; i++)
+                    if(!candy[i]->isDestroyed())
+                        painter->drawImage(candy[i]->getRect(), candy[i]->getImage());
+            }
+        }
+    }
 }
 
 void dodgeball::timerEvent(QTimerEvent *e){
 
   Q_UNUSED(e);
+
+    if(score >= 7500)
+        round = 2;
+    if(score >= 15000)
+        round = 3;
+
 
   moveObjects();
   checkCollision();
@@ -73,14 +144,36 @@ void dodgeball::timerEvent(QTimerEvent *e){
 
 void dodgeball::moveObjects(){
 
-  banana->autoMove();
-  character->move();
-}
+      character->mouse = mapFromGlobal(QCursor::pos());
 
-void dodgeball::mouseMoveEvent(QMouseEvent *e){
+      if(round >= 1){
+          for(int i = 0; i < 10; i++)
+              if(!banana[i]->isDestroyed())
+                  banana[i]->autoMove();
+          for(int i = 0; i < 10; i++)
+              if(!soda[i]->isDestroyed())
+                  soda[i]->autoMove();
 
-    character->setXDir(e->pos().x());
-    character->setYDir(e->pos().y());
+           if(round >= 2){
+               for(int i = 0; i < 8; i++)
+                   if(!orange[i]->isDestroyed())
+                       orange[i]->autoMove();
+               for(int i = 0; i < 8; i++)
+                   if(!chips[i]->isDestroyed())
+                       chips[i]->autoMove();
+
+               if(round >= 3){
+                   for(int i = 0; i < 6; i++)
+                       if(!raspberry[i]->isDestroyed())
+                           raspberry[i]->autoMove();
+                   for(int i = 0; i < 6; i++)
+                       if(!candy[i]->isDestroyed())
+                           candy[i]->autoMove();
+               }
+           }
+      }
+
+    character->move();
 
 }
 
@@ -110,7 +203,33 @@ void dodgeball::keyPressEvent(QKeyEvent *e){
 void dodgeball::startGame(){
 
   if (!gameStarted){
-    banana->resetState();
+
+      if(round >= 1){
+          for(int i = 0; i < 10; i++)
+              if(!banana[i]->isDestroyed())
+                  banana[i]->resetState();
+          for(int i = 0; i < 10; i++)
+              if(!soda[i]->isDestroyed())
+                  soda[i]->resetState();
+
+          if(round >= 2){
+              for(int i = 0; i < 8; i++)
+                  if(!orange[i]->isDestroyed())
+                      orange[i]->resetState();
+              for(int i = 0; i < 8; i++)
+                  if(!chips[i]->isDestroyed())
+                      chips[i]->resetState();
+
+              if(round >= 3){
+                  for(int i = 0; i < 6; i++)
+                      if(!raspberry[i]->isDestroyed())
+                          raspberry[i]->resetState();
+                  for(int i = 0; i < 6; i++)
+                      if(!candy[i]->isDestroyed())
+                          candy[i]->resetState();
+              }
+          }
+      }
     character->resetState();
 
     gameOver = false;
@@ -118,6 +237,26 @@ void dodgeball::startGame(){
     gameStarted = true;
     timerId = startTimer(DELAY);
   }
+
+  if(round >= 1){
+      for(int i = 0; i < 10; i++)
+        banana[i] = new ball(":/resources/banana.png", round);
+      for(int i = 0; i < 10; i++)
+        soda[i] = new ball(":/resources/r1ball.png", round);
+      if(round >= 2){
+          for(int i = 0; i < 8; i++)
+            orange[i] = new ball(":/resources/orange.png", round);
+          for(int i = 0; i < 8; i++)
+            chips[i] = new ball(":/resources/r2ball.png", round);
+          if(round >= 3){
+              for(int i = 0; i < 6; i++)
+                raspberry[i] = new ball(":/resources/raspberry.png", round);
+              for(int i = 0; i < 6; i++)
+                candy[i] = new ball(":/resources/r3ball.png", round);
+          }
+      }
+  }
+
 }
 
 void dodgeball::pauseGame(){
@@ -149,14 +288,91 @@ void dodgeball::victory(){
 
 void dodgeball::checkCollision(){
 
-  if(!banana->isDestroyed()){
-      if ((banana->getRect()).intersects(character->getRect())){
-          score += 100;
-          banana->setDestroyed(true);
-      }
-  }
-  else if(banana->isDestroyed()){
-      delete banana;
-  }
+
+    if(round >= 1){
+        for(int i = 0; i < 10; i++){
+            if(!banana[i]->isDestroyed())
+                if ((banana[i]->getRect()).intersects(character->getRect())){
+                    score += 100;
+                    banana[i]->setDestroyed(true);
+                    banana[i] = new ball(":/resources/banana.png", round);
+                }
+
+                if(banana[i]->getRect().left() < 0){
+                    banana[i]->setDestroyed(true);
+                    banana[i] = new ball(":/resources/banana.png", round);
+                }
+        }
+
+        for(int i = 0; i < 10; i++){
+            if(!soda[i]->isDestroyed())
+                if ((soda[i]->getRect()).intersects(character->getRect())){
+                    score -= 100;
+                    soda[i]->setDestroyed(true);
+                    soda[i] = new ball(":/resources/r1ball.png", round);
+                }
+
+                if(soda[i]->getRect().left() < 0){
+                    soda[i]->setDestroyed(true);
+                    soda[i] = new ball(":/resources/r1ball.png", round);
+                }
+        }
+        if(round >= 2){
+            for(int i = 0; i < 8; i++){
+                if(!orange[i]->isDestroyed())
+                    if ((orange[i]->getRect()).intersects(character->getRect())){
+                        score += 200;
+                        orange[i]->setDestroyed(true);
+                        orange[i] = new ball(":/resources/orange.png", round);
+                    }
+
+                    if(orange[i]->getRect().left() < 0){
+                        orange[i]->setDestroyed(true);
+                        orange[i] = new ball(":/resources/orange.png", round);
+                    }
+            }
+            for(int i = 0; i < 8; i++){
+                if(!chips[i]->isDestroyed())
+                    if ((chips[i]->getRect()).intersects(character->getRect())){
+                        score += 200;
+                        chips[i]->setDestroyed(true);
+                        chips[i] = new ball(":/resources/r2ball.png", round);
+                    }
+
+                    if(chips[i]->getRect().left() < 0){
+                        chips[i]->setDestroyed(true);
+                        chips[i] = new ball(":/resources/r2ball.png", round);
+                    }
+            }
+            if(round >=3){
+                for(int i = 0; i < 6; i++){
+                    if(!raspberry[i]->isDestroyed())
+                        if ((raspberry[i]->getRect()).intersects(character->getRect())){
+                            score += 300;
+                            raspberry[i]->setDestroyed(true);
+                            raspberry[i] = new ball(":/resources/raspberry.png", round);
+                        }
+
+                        if(raspberry[i]->getRect().left() < 0){
+                            raspberry[i]->setDestroyed(true);
+                            raspberry[i] = new ball(":/resources/raspberry.png", round);
+                        }
+                }
+                for(int i = 0; i < 6; i++){
+                    if(!candy[i]->isDestroyed())
+                        if ((candy[i]->getRect()).intersects(character->getRect())){
+                            score += 100;
+                            candy[i]->setDestroyed(true);
+                            candy[i] = new ball(":/resources/r3ball.png", round);
+                        }
+
+                        if(candy[i]->getRect().left() < 0){
+                            candy[i]->setDestroyed(true);
+                            candy[i] = new ball(":/resources/r3ball.png", round);
+                        }
+                }
+            }
+        }
+    }
 }
 

@@ -6,17 +6,43 @@ ball::ball() {
 
 }
 
-ball::ball(QString source) {
+ball::ball(QString source, int round) {
 
-  xdir = 1;
-  ydir = -1;
-  randX = qrand() % ((-5 + 1) - -10) + -10;
-  randY = qrand() % ((-10 + 1) - -10) + -10;
+    image.load(source);
+    rect = image.rect();
 
-  image.load(source);
+    INITIAL_Y = qrand() % ((620 + 1) - 100) + 100;
+    int x = 0;
+    int y = 0;
 
-  rect = image.rect();
-  resetState();
+    if(round == 1){
+        x = qrand() % ((-5 + 1) - -10) + -10;
+        y = qrand() % ((10 + 1) - -10) + -10;
+    }
+    if(round == 2){
+        x = qrand() % ((-10 + 1) - -15) + -15;
+        y = qrand() % ((15 + 1) - -15) + -15;
+    }
+    if(round == 3){
+        x = qrand() % ((-15 + 1) - -20) + -20;
+        y = qrand() % ((20 + 1) - -20) + -20;
+    }
+
+    xdir = x;
+    ydir = y;
+
+    destroyed = false;
+
+    randY = .5;
+    randX = .5;
+
+
+    //randX = rand() % 1;
+    //randY = rand() % 1;
+    //INITIAL_Y = randY;
+    //bVelocity.setX(randX);
+    //bVelocity.setY(randY);
+    resetState();
 }
 
 ball::~ball() {
@@ -25,35 +51,25 @@ ball::~ball() {
 
 bool ball::isDestroyed() {
 
-  return destroyed;
+    return destroyed;
 }
 
 void ball::setDestroyed(bool destr) {
 
-  destroyed = destr;
+    destroyed = destr;
 }
 
 void ball::autoMove() {
 
-  rect.translate(xdir, ydir);
+    rect.translate(xdir, ydir);
 
-  if (rect.left() == LEFT_EDGE) {
-      xdir = 1;
-  }
-  if (rect.right() == RIGHT_EDGE) {
-      xdir = -1;
-  }
-  if (rect.top() == TOP_EDGE) {
-      ydir = 1;
-  }
-  if (rect.bottom() == BOTTOM_EDGE) {
-      ydir = -1;
-  }
+    if (rect.top() <= 0 || rect.bottom() >= BOTTOM_EDGE)
+        ydir = -1*ydir;
 }
 
 void ball::resetState() {
 
-  rect.moveTo(INITIAL_X, INITIAL_Y);
+    rect.moveTo(INITIAL_X, INITIAL_Y);
 }
 
 void ball::setXDir(int x) {
@@ -83,5 +99,5 @@ QRect ball::getRect() {
 
 QImage & ball::getImage() {
 
-  return image;
+    return image;
 }

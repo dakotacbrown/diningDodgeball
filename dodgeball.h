@@ -19,7 +19,7 @@ class dodgeball : public QWidget {
     void paintEvent(QPaintEvent *);
     void timerEvent(QTimerEvent *);
     void keyPressEvent(QKeyEvent *);
-    void mouseMoveEvent(QMouseEvent *);
+    //void mouseMoveEvent(QMouseEvent *);
     void drawObjects(QPainter *);
     void finishGame(QPainter *, QString);
     void moveObjects();
@@ -28,6 +28,7 @@ class dodgeball : public QWidget {
     void stopGame();
     void victory();
     void checkCollision();
+    void roundCheck();
 
   private:
     int x;
@@ -39,7 +40,12 @@ class dodgeball : public QWidget {
     static const int TOP_EDGE = 0;
     static const int BOTTOM_EDGE = 480;
     player *character;
-    ball *banana;
+    ball *banana[10];
+    ball *orange[8];
+    ball *raspberry[6];
+    ball *soda[10];
+    ball *chips[8];
+    ball *candy[6];
     bool gameOver;
     bool gameWon;
     bool gameStarted;

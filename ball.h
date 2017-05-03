@@ -5,39 +5,41 @@
 #include <QRect>
 #include <QString>
 
+
 class ball {
 
   public:
     ball();
-    ball(QString);
+    ball(QString, int);
     ~ball();
 
   public:
     void resetState();
     void autoMove();
-    void setXDir(int);
-    void setYDir(int);
-    int getXDir();
-    int getYDir();
     QRect getRect();
     QImage & getImage();
     bool isDestroyed();
     void setDestroyed(bool);
+    void setXDir(int);
+    void setYDir(int);
+    int getXDir();
+    int getYDir();
 
   private:
+    QImage image;
     int xdir;
     int ydir;
-    int randX;
-    int randY;
-    bool destroyed;
-    QImage image;
     QRect rect;
-    static const int INITIAL_X = 810;
-    static const int INITIAL_Y = 750;
-    static const int RIGHT_EDGE = 800;
+    bool destroyed;
+    float randX, randY;
+
+
+    static const int INITIAL_X = 1280;
+    int INITIAL_Y;
+    static const int RIGHT_EDGE = 1280;
     static const int LEFT_EDGE = 0;
     static const int TOP_EDGE = 0;
-    static const int BOTTOM_EDGE = 480;
+    static const int BOTTOM_EDGE = 720;
 };
 
 #endif // BALL_H
